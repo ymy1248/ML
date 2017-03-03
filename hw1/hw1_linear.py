@@ -13,9 +13,9 @@ order = 1
 
 
 def init_w (order):
-	global w
+	# global w
 	global w_rate
-	w = [0.0] * (order*9)
+	# w = [0.0] * (order*9)
 	w_rate = [0.0] * (order*9)
 
 # TODO other model_func
@@ -39,7 +39,7 @@ def first_gradient(in_put_all):
 def loss_function(data, model_func = first_order):
 	loss = 0.0
 	for d in data:
-		loss +=  (data[9] - model_func(data[:9]))**2
+		loss +=  (d[9] - model_func(d[:9]))**2
 	return loss
 
 def decent(data, gradient = first_gradient, tolerance = 0.00001):
@@ -61,17 +61,19 @@ def decent(data, gradient = first_gradient, tolerance = 0.00001):
 			if abs(i) >= tolerance:
 				flag = True
 				break
-	print("gradient:",gra)
-	print("b:", b)
 	print("weight:", w)
+	print("b:", b)
 
-file_name = "train.csv"
-with open(file_name, "r") as f:
+train_file_name = "train.csv"
+test_file_name = "test_X.csv"
+
+with open(train_file_name, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
 	raw_data = list(reader)
 
 pm_data = []
 train_data = []
+
 for i in range(10,len(raw_data),18):
 	for j in range(3,len(raw_data[i])):
 		pm_data.append(float(raw_data[i][j]))
@@ -80,5 +82,34 @@ for i in range(10,len(pm_data)):
 	for j in range(i-9,i+1):
 		per_data.append(pm_data[j])
 	train_data.append(per_data)
-init_w(order)
-decent(train_data, first_gradient, e)
+
+with open(test_file_name, "r", encoding='utf-8', errors='ignore') as f:
+	reader = csv.reader(f)
+	test_raw_data = list(reader)
+
+test_data = []
+
+for i in range(9, len(test_raw_data), 18):
+	per_data = []
+	for j in range(2,len(test_raw_data[i])):
+		per_data.append(float(test_raw_data[i][j]))
+	test_data.append(per_data)
+w = [-0.030129083743591557, -0.023592551532012472, 0.20359946401686058, -0.2223657123569071, -0.053427610599369575, 0.5098415114960058, -0.5554281699309873, 0.003398654672339754, 1.0867178818400562]
+b = 1.7416458431857202
+# init_w(order)
+# decent(train_data, first_gradient, e)
+ans = []
+
+for i in range(len(test_data)):
+	ans.append(first_order(test_data[i]))
+	test_data[i].append(ans[i])
+
+print(ans)
+
+with open("ans.csv", "w") as f:
+	writer = csv.writer(f)
+	writer.writerow(["id", "value"])
+	for i in range(len(ans)):
+		row = ["id_"+str(i), ans[i]]
+		writer.writerow(row)
+# print(loss_function(train_data))
