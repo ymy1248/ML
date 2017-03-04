@@ -13,9 +13,11 @@ order = 1
 
 
 def init_w (order):
-	# global w
+	global w
+	w = [0.0] * (order*9)
+
+def init_w_rate(order):
 	global w_rate
-	# w = [0.0] * (order*9)
 	w_rate = [0.0] * (order*9)
 
 # TODO other model_func
@@ -34,6 +36,36 @@ def first_gradient(in_put_all):
 		for i in range(len(d) - 1):
 			gradient[i] += 2*diff*(-d[i])
 		gradient[9] += -2 * diff
+	return gradient
+
+# def second_order(in_put):
+# 	global w
+# 	global b
+# 	out_put = b
+# 	for i in range(0,18,2):
+# 		out_put += w[i]*(in_put[i]**2) + w[i+1] * in_put[i]
+# 	return out_put
+
+# def second_gradient():
+# 	gradient = 
+
+def model_function(order, in_put):
+	global w
+	global b
+	out_put = b
+	for i in range(9):
+		for j in range(order):
+			output += w[i*order+j] * (in_put[i]**j)
+	return output
+
+def gradient(order, in_put_all):
+	gradient = [0.0]*(order*9+1)
+	for d in in_put_all:
+		diff = d[9] - model_function(order, d)
+		for i in range(9):
+			for j in range(order):
+				gradient[i*order+j] += 2*diff*(-d[i]**j)
+		gradient[order*9] += -2 * diff
 	return gradient
 
 def loss_function(data, model_func = first_order):
@@ -96,8 +128,9 @@ for i in range(9, len(test_raw_data), 18):
 	test_data.append(per_data)
 w = [-0.030129083743591557, -0.023592551532012472, 0.20359946401686058, -0.2223657123569071, -0.053427610599369575, 0.5098415114960058, -0.5554281699309873, 0.003398654672339754, 1.0867178818400562]
 b = 1.7416458431857202
-# init_w(order)
+init_w_rate(order)
 # decent(train_data, first_gradient, e)
+
 ans = []
 
 for i in range(len(test_data)):
