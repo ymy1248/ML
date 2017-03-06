@@ -4,6 +4,79 @@ import csv
 import math
 import time
 # import matplotlib.pyplot as plt
+class PmLinearModel:
+	def __init__(self, config):
+		self.config = config
+
+	# TODO rewrite w and b value
+
+	def modelFunction(self, order, in_put):
+		global w
+		global b
+		out_put = b
+		for i in range(9):
+			power = 1.0
+			for j in range(order):
+				power *= in_put[i]
+				out_put += w[i*order+j] * power
+		# return round(out_put)
+		return out_put
+
+	def gradient_func(self, order, in_put_all):
+		gradient = [0.0]*(order*9+1)
+		for d in in_put_all:
+			diff = d[9] - model_function(order, d)
+			for i in range(9):
+				power = 1.0
+				for j in range(order):
+					power *= d[i]
+					gradient[i*order+j] += -2*diff*power
+			gradient[order*9] += -2 * diff
+		return gradient
+
+	def loss_function(self, order, data, model_func = model_function):
+		loss = 0.0
+		for d in data:
+			loss +=  (d[9] - model_func(order ,d[:9]))**2
+		return loss
+
+	def decent(order, data, gradient = gradient_func, tolerance = 0.00001):
+		global w
+		global b
+		global b_rate
+		gra = gradient(order, data) 
+		# gra = first_gradient(data)
+		flag = True
+		loss = []
+		k = 0
+		while flag == True:
+		# for k in range(3000):
+			if k%1000 == 0:
+				loss_num = loss_function(order, data)
+				loss.append(loss_num)
+				print("k = ", k)
+				print("loss: ",loss_num)
+				print("gradient: ", gra)
+				print("weight: ", w)
+				print("b: ", b)
+				print("----------------------------------------")
+			for i in range(len(w)):
+				w_rate[i] += gra[i]**2
+				w[i] -= rate / math.sqrt(w_rate[i]) * gra[i]
+			b_rate += gra[len(gra)-1]**2
+			b -= rate/ math.sqrt(b_rate)*gra[len(gra)-1]
+			gra = gradient(order, data)
+			# gra = first_gradient(data)
+			# print(gra)
+			flag = False
+			k = k + 1
+			for i in gra:
+				if abs(i) >= tolerance:
+					flag = True
+					break
+		# plt.plot(loss)
+		print("weight:", w)
+		print("b:", b)
 
 start = time.time()
 w = []
@@ -42,74 +115,13 @@ def first_gradient(in_put_all):
 		gradient[9] += -2 * diff
 	return gradient
 
-def model_function(order, in_put):
-	global w
-	global b
-	out_put = b
-	for i in range(9):
-		power = 1.0
-		for j in range(order):
-			power *= in_put[i]
-			out_put += w[i*order+j] * power
-	return round(out_put)
-	# return out_put
 
-def gradient_func(order, in_put_all):
-	gradient = [0.0]*(order*9+1)
-	for d in in_put_all:
-		diff = d[9] - model_function(order, d)
-		for i in range(9):
-			power = 1.0
-			for j in range(order):
-				power *= d[i]
-				gradient[i*order+j] += -2*diff*power
-		gradient[order*9] += -2 * diff
-	return gradient
 
-def loss_function(order, data, model_func = model_function):
-	loss = 0.0
-	for d in data:
-		loss +=  (d[9] - model_func(order ,d[:9]))**2
-	return loss
 
-def decent(order, data, gradient = gradient_func, tolerance = 0.00001):
-	# TODO 
-	global w
-	global b
-	global b_rate
-	gra = gradient(order, data) 
-	# gra = first_gradient(data)
-	flag = True
-	loss = []
-	k = 0
-	while flag == True:
-	# for k in range(3000):
-		if k%1000 == 0:
-			loss_num = loss_function(order, data)
-			loss.append(loss_num)
-			print("k = ", k)
-			print("loss: ",loss_num)
-			print("gradient: ", gra)
-			print("weight: ", w)
-			print("b: ", b)
-			print("----------------------------------------")
-		for i in range(len(w)):
-			w_rate[i] += gra[i]**2
-			w[i] -= rate / math.sqrt(w_rate[i]) * gra[i]
-		b_rate += gra[len(gra)-1]**2
-		b -= rate/ math.sqrt(b_rate)*gra[len(gra)-1]
-		gra = gradient(order, data)
-		# gra = first_gradient(data)
-		# print(gra)
-		flag = False
-		k = k + 1
-		for i in gra:
-			if abs(i) >= tolerance:
-				flag = True
-				break
-	# plt.plot(loss)
-	print("weight:", w)
-	print("b:", b)
+
+
+
+
 
 train_file_name = "train.csv"
 test_file_name = "test_X.csv"
