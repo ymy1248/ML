@@ -1,7 +1,7 @@
 import model as m
 
-config = {
-	"l_rate"	: 1,						# learning rate
-	"model"		: m.initFirstOrder, 		# trained or untrained model
+modelConfig = {
+	"lRate"		: 0.00005,						# learning rate
+	"model"		: m.second220930, 		# trained or untrained model
 	"e"		  	: 1							# stop criteria
 }
