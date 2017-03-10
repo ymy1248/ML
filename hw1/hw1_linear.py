@@ -7,7 +7,7 @@ import config
 # import matplotlib.pyplot as plt
 class LinearModel:
 	def __init__(self, config, data):
-		self.lRate = config["lRate"]				# learning rate factor
+		self.lRate 	= config["lRate"]				# learning rate factor
 		self.e 		= config["e"]					# stop criteria
 		self.order  = config["model"]["order"]		# model order
 		self.w 		= config["model"]["weight"]		# weight
@@ -81,7 +81,7 @@ class LinearModel:
 					break
 		# plt.plot(loss)
 		print("weight:", self.w)
-		print("b:", b)
+		print("bias:", self.b)
 
 if __name__ == "__main__":
 	start = time.time()
@@ -93,48 +93,48 @@ if __name__ == "__main__":
 	# w_rate = []
 	# order = 2
 
-	train_file_name = "train.csv"
-	test_file_name = "test_X.csv"
+	trainFileName = "train.csv"
+	testFileName = "test_X.csv"
 
-	with open(train_file_name, "r", encoding='utf-8', errors='ignore') as f:
+	with open(trainFileName, "r", encoding='utf-8', errors='ignore') as f:
 		reader = csv.reader(f)
-		raw_data = list(reader)
+		rawData = list(reader)
 
-	pm_data = []
-	train_data = []
+	pmData = []
+	trainData = []
 
-	for i in range(10,len(raw_data),18):
-		for j in range(3,len(raw_data[i])):
-			pm_data.append(float(raw_data[i][j]))
-	for i in range(10,len(pm_data)):
-		per_data = []
+	for i in range(10,len(rawData),18):
+		for j in range(3,len(rawData[i])):
+			pmData.append(float(rawData[i][j]))
+	for i in range(10,len(pmData)):
+		perData = []
 		for j in range(i-9,i+1):
-			per_data.append(pm_data[j])
-		train_data.append(per_data)
+			perData.append(pmData[j])
+		trainData.append(perData)
 
-	with open(test_file_name, "r", encoding='utf-8', errors='ignore') as f:
+	with open(testFileName, "r", encoding='utf-8', errors='ignore') as f:
 		reader = csv.reader(f)
-		test_raw_data = list(reader)
+		testRawData = list(reader)
 
-	test_data = []
+	testData = []
 
-	for i in range(9, len(test_raw_data), 18):
-		per_data = []
-		for j in range(2,len(test_raw_data[i])):
-			per_data.append(float(test_raw_data[i][j]))
-		test_data.append(per_data)
+	for i in range(9, len(testRawData), 18):
+		perData = []
+		for j in range(2,len(testRawData[i])):
+			perData.append(float(testRawData[i][j]))
+		testData.append(perData)
 
 	# init_w(order)
 	# init_w_rate(order)
-	# decent(order, train_data, gradient_func, e)
-	model = LinearModel(config.modelConfig, train_data)
+	# decent(order, trainData, gradient_func, e)
+	model = LinearModel(config.modelConfig, trainData)
 	model.decent()
 
 	ans = []
 
-	for i in range(len(test_data)):
-		ans.append(model.modelResult(test_data[i]))
-		test_data[i].append(ans[i])
+	for i in range(len(testData)):
+		ans.append(model.modelResult(testData[i]))
+		testData[i].append(ans[i])
 
 
 	with open("ans.csv", "w") as f:

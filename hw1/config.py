@@ -1,7 +1,7 @@
 import model as m
 
 modelConfig = {
-	"lRate"		: 0.00005,						# learning rate
-	"model"		: m.second220930, 		# trained or untrained model
+	"lRate"		: 0.1,						# learning rate
+	"model"		: m.secondGrad219188, 		# trained or untrained model
 	"e"		  	: 1							# stop criteria
 }
