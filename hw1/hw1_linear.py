@@ -37,7 +37,7 @@ class LinearModel:
 				power = 1.0
 				for j in range(self.order):
 					power *= d[i]
-					gradient[i*self.order+j] += -2*diff*power
+					gradient[i*self.order+j] += -2*diff*power + 2*self.lamda*self.w[i*self.order+j]
 			gradient[self.order*self.feaNum] += -2 * diff	# bias gradient
 		return gradient
 
