@@ -16,6 +16,7 @@ class LinearModel:
 		self.feaNum = len(data[0]) - 1				# input feature number
 		self.bRate  = 0.0							# b learning rate
 		self.wRate  = [0.0]*(self.order*self.feaNum)
+		self.lamda  = config["model"]["lamda"]
 
 	# inPut: input all the feature as a 1d list
 	def modelResult(self, inPut):
