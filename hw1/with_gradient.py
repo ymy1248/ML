@@ -1,11 +1,11 @@
-import hw1_linear as hw1
 import csv
+import hw1_linear as hw1
 import config
 
-trainFileName = "train.csv"
-testFileName = "test_X.csv"
+TRAIN_FILE = "train.csv"
+TEST_FILE = "test_X.csv"
 
-with open(trainFileName, "r", encoding='utf-8', errors='ignore') as f:
+with open(TRAIN_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
 	rawData = list(reader)
 
@@ -24,7 +24,7 @@ for i in range(10,len(pmData)):
 		perData.append(pmData[j])
 	trainData.append(perData)
 
-with open(testFileName, "r", encoding='utf-8', errors='ignore') as f:
+with open(TEST_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
 	testRawData = list(reader)
 

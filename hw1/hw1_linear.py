@@ -1,5 +1,3 @@
-# PM2.5 is an interger value
-
 import csv
 import math
 import time
