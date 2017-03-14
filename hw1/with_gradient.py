@@ -39,7 +39,7 @@ for i in range(9, len(testRawData), 18):
 	testData.append(perData)
 
 model = hw1.LinearModel(config.modelConfig, trainData)
-model.decent()
+# model.decent()
 
 ans = []
 
