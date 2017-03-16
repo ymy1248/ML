@@ -1,5 +1,5 @@
 import csv
-import hw1_linear as hw1
+import LinearModel as lm
 import config
 
 TRAIN_FILE = "train.csv"
@@ -38,7 +38,7 @@ for i in range(9, len(testRawData), 18):
 		perData.append(float(testRawData[i][j]))
 	testData.append(perData)
 
-model = hw1.LinearModel(config.modelConfig, trainData)
+model = lm.LinearModel(config.modelConfig, trainData)
 # model.decent()
 
 ans = []
