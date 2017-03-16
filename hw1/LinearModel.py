@@ -15,6 +15,7 @@ class LinearModel:
 		self.bRate  = 0.0							# b learning rate
 		self.wRate  = [0.0]*(self.order*self.feaNum)
 		self.lamda  = config["model"]["lamda"]
+		self.part	+ config["model"]["part"]
 
 	# inPut: input all the feature as a 1d list
 	def modelResult(self, inPut):
@@ -39,6 +40,8 @@ class LinearModel:
 			gradient[self.order*self.feaNum] += -2 * diff	# bias gradient
 		return gradient
 
+	def
+
 	# loss function with all the data
 	def lossFunction(self):
 		loss = 0.0
@@ -46,8 +49,7 @@ class LinearModel:
 			loss +=  (d[self.feaNum] - self.modelResult(d[:len(d)-1]))**2
 		return loss
 
-	def decent(self):
-		global b
+	def train(self):
 		gra = self.gradientFunc() 
 		# gra = first_gradient(data)
 		flag = True
@@ -81,6 +83,47 @@ class LinearModel:
 		# plt.plot(loss)
 		print("weight:", self.w)
 		print("bias:", self.b)
+
+	def testTrain(self):
+		gra = self.gradientFunc() 
+		# gra = first_gradient(data)
+		flag = True
+		k = 0
+		while flag == True:
+		# for k in range(3000):
+			if k%1000 == 0:
+				loss_num = self.lossFunction()
+				test = self.testScore()
+				print("k = ", k)
+				print("loss: ",loss_num)
+				print("test: ", test)
+				print("gradient: ", gra)
+				print("weight: ", self.w)
+				print("b: ", self.b)
+				print("----------------------------------------")
+			for i in range(len(self.w)):
+				self.wRate[i] += gra[i]**2
+				self.w[i] -= self.lRate / math.sqrt(self.wRate[i]) * gra[i]
+			self.bRate += gra[len(gra)-1]**2
+			self.b -= self.lRate/ math.sqrt(self.bRate)*gra[len(gra)-1]
+			gra = self.gradientFunc()
+			# gra = first_gradient(data)
+			# print(gra)
+			flag = False
+			k = k + 1
+			for i in gra:
+				if abs(i) >= self.e:
+					flag = True
+					break
+		# plt.plot(loss)
+		print("weight:", self.w)
+		print("bias:", self.b)
+
+	def testScore(self):
+		loss = 0.0
+		for i in range(int(len(self.data)*self.part),len(self.data)):
+			loss +=  (self.data[i][self.feaNum] - self.modelResult(d[:len(d)-1]))**2
+		return loss
 
 if __name__ == "__main__":
 	start = time.time()
@@ -127,7 +170,7 @@ if __name__ == "__main__":
 	# init_w_rate(order)
 	# decent(order, trainData, gradient_func, e)
 	model = LinearModel(config.modelConfig, trainData)
-	model.decent()
+	model.train()
 
 	ans = []
 
