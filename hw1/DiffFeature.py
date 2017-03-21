@@ -1,6 +1,7 @@
 import csv
 import LinearModel as lm
 import config
+import matplotlib.pyplot as plt
 
 TRAIN_FILE = "train.csv"
 TEST_FILE = "test_X.csv"
@@ -10,19 +11,32 @@ with open(TRAIN_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	rawData = list(reader)
 
 pmData = []
+monthData = []
 trainData = []
+day = 1
 
 for i in range(10,len(rawData),18):
 	for j in range(3,len(rawData[i])):
-		pmData.append(float(rawData[i][j]))
+		monthData.append(float(rawData[i][j]))
+	if day%20 == 0:
+		pmData.append(monthData)
+		# print(monthData)
+		# print("--------------------------------------------")
+		# print(pmData)
+		# print("--------------------------------------------")
+		monthData = []
+	day = day +1
 
-for i in range(10,len(pmData)):
-	perData = []
-	for j in range(i-8,i):
-		perData.append(pmData[j] - pmData[j-1])
-	for j in range(i-9,i+1):
-		perData.append(pmData[j])
-	trainData.append(perData)
+for data in pmData:
+	for i in range(10, len(data)):
+		perData = []
+		for j in range(i-8,i):
+			perData.append(data[j] - data[j-1])
+		for j in range(i-9,i+1):
+			perData.append(data[j])
+		trainData.append(perData)
+
+print(len(trainData))
 
 with open(TEST_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
@@ -38,8 +52,12 @@ for i in range(9, len(testRawData), 18):
 		perData.append(float(testRawData[i][j]))
 	testData.append(perData)
 
-model = lm.LinearModel(config.modelConfig, trainData)
-model.train()
+valiScore = []
+for i in range(200, len(trainData)-1000, 200):
+	print("i = " , i)
+	model = lm.LinearModel(config.modelConfig, trainData[0:i])
+	model.train()
+	valiScore.append(model.vali(trainData[-1000:]))
 
 ans = []
 
@@ -54,5 +72,8 @@ with open("ans.csv", "w") as f:
 	for i in range(len(ans)):
 		row = ["id_"+str(i), ans[i]]
 		writer.writerow(row)
-# plt.show()
+print("-------------------------------------------------------")
+print(valiScore)
+plt.plot(valiScore)
+plt.show()
 print(model.lossFunction())
