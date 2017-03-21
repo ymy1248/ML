@@ -67,8 +67,8 @@ class LinearModel:
 		flag = True
 		loss = []
 		k = 0
-		while flag == True:
-		# for k in range(3000):
+		# while flag == True:
+		for k in range(6000):
 			if k%2000 == 0:
 				loss_num = self.lossFunction()
 				loss.append(loss_num)

@@ -2,6 +2,7 @@ import csv
 import LinearModel as lm
 import config
 import matplotlib.pyplot as plt
+import model as m
 
 TRAIN_FILE = "train.csv"
 TEST_FILE = "test_X.csv"
@@ -52,12 +53,27 @@ for i in range(9, len(testRawData), 18):
 		perData.append(float(testRawData[i][j]))
 	testData.append(perData)
 
-valiScore = []
-for i in range(200, len(trainData)-1000, 200):
-	print("i = " , i)
-	model = lm.LinearModel(config.modelConfig, trainData[0:i])
+# valiScore = []
+# for i in range(200, len(trainData)-1000, 200):
+# 	print("i = " , i)
+# 	model = lm.LinearModel(config.modelConfig, trainData[0:i])
+# 	model.train()
+# 	valiScore.append(model.vali(trainData[-1000:]))
+
+lamdaScore = []
+lamda = []
+config = {
+	"lRate"		: 1,						# learning rate
+	"model"		: m.initSecondGrad, 		# trained or untrained model
+	"e"		  	: 0.1,						# stop criteria
+	"lamda"		: 0
+}
+for i in range(6):
+	config["lamda"] = i*0.5
+	model = lm.LinearModel(config,trainData[0:-500])
 	model.train()
-	valiScore.append(model.vali(trainData[-1000:]))
+	lamdaScore.append(model.vali(trainData[-500:]))
+	lamda.append(i*0.5)
 
 ans = []
 
@@ -73,7 +89,9 @@ with open("ans.csv", "w") as f:
 		row = ["id_"+str(i), ans[i]]
 		writer.writerow(row)
 print("-------------------------------------------------------")
-print(valiScore)
-plt.plot(valiScore)
+print(lamdaScore)
+plt.plot(x,)
+plt.ylabel("validation score")
+plt.xlabel("lamda")
 plt.show()
 print(model.lossFunction())
