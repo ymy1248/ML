@@ -8,7 +8,7 @@ class LinearModel:
 		self.lRate 	= config["lRate"]				# learning rate factor
 		self.e 		= config["e"]					# stop criteria
 		self.order  = config["model"]["order"]		# model order
-		self.w 		= config["model"]["weight"]		# weight
+		self.w 		= config["model"]["weight"].copy()		# weight
 		self.b      = config["model"]["bias"]		# bias
 		self.data 	= data							# input vector with last is ans
 		self.feaNum = len(data[0]) - 1				# input feature number
@@ -68,7 +68,7 @@ class LinearModel:
 		loss = []
 		k = 0
 		# while flag == True:
-		for k in range(6000):
+		for k in range(4000):
 			if k%2000 == 0:
 				loss_num = self.lossFunction()
 				loss.append(loss_num)
