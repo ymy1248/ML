@@ -1,11 +1,12 @@
 import csv
 import LinearModel as lm
 import config
-import matplotlib.pyplot as plt
 import model as m
+import sys
 
-TRAIN_FILE = "train.csv"
-TEST_FILE = "test_X.csv"
+TRAIN_FILE = sys.argv[1]
+TEST_FILE = sys.argv[2]
+RES_FILE = sys.argv[3]
 
 with open(TRAIN_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
@@ -21,10 +22,6 @@ for i in range(10,len(rawData),18):
 		monthData.append(float(rawData[i][j]))
 	if day%20 == 0:
 		pmData.append(monthData)
-		# print(monthData)
-		# print("--------------------------------------------")
-		# print(pmData)
-		# print("--------------------------------------------")
 		monthData = []
 	day = day +1
 
@@ -36,8 +33,6 @@ for data in pmData:
 		for j in range(i-9,i+1):
 			perData.append(data[j])
 		trainData.append(perData)
-
-print(len(trainData))
 
 with open(TEST_FILE, "r", encoding='utf-8', errors='ignore') as f:
 	reader = csv.reader(f)
@@ -63,9 +58,7 @@ for i in range(9, len(testRawData), 18):
 lamdaScore = []
 lamda = []
 
-model = lm.LinearModel(config.modelConfig,trainData[0:-500])
-
-print(model.vali(trainData[-500:]))
+model = lm.LinearModel(config.modelConfig,trainData)
 
 ans = []
 
@@ -74,12 +67,9 @@ for i in range(len(testData)):
 	testData[i].append(ans[i])
 
 
-with open("ans.csv", "w") as f:
+with open(RES_FILE, "w") as f:
 	writer = csv.writer(f)
 	writer.writerow(["id", "value"])
 	for i in range(len(ans)):
 		row = ["id_"+str(i), ans[i]]
 		writer.writerow(row)
-print("-------------------------------------------------------")
-print(lamdaScore)
-print(model.lossFunction())

@@ -2,7 +2,8 @@ import csv
 import math
 import time
 import config
-# import matplotlib.pyplot as plt
+
+# this is the training model for linear regression
 class LinearModel:
 	def __init__(self, config, data):
 		self.lRate 	= config["lRate"]				# learning rate factor
