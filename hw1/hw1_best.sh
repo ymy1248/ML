@@ -1,1 +1,1 @@
-python3 DiffFeature.py $1 $2 $3
+python3 DiffFeature.py $1 $2 $3 best

@@ -1,6 +1,5 @@
 import csv
 import LinearModel as lm
-import config
 import model as m
 import sys
 
@@ -58,7 +57,22 @@ for i in range(9, len(testRawData), 18):
 lamdaScore = []
 lamda = []
 
-model = lm.LinearModel(config.modelConfig,trainData)
+modelConfigBest = {
+	"lRate"		: 1,						# learning rate
+	"model"		: m.newThirdGrad208966, 		# trained or untrained model
+	"e"		  	: 0.1,						# stop criteria
+	"lamda"		: 0
+}
+modelConfig = {
+	"lRate"		: 1,						# learning rate
+	"model"		: m.newSecondGrad219551, 		# trained or untrained model
+	"e"		  	: 0.1,						# stop criteria
+	"lamda"		: 0
+}
+if sys.argv[4] == "best":
+	model = lm.LinearModel(modelConfigBest,trainData)
+else:
+	model = lm.LinearModel(modelConfig,trainData)
 
 ans = []
 
