@@ -45,11 +45,13 @@ class LogisticRegression:
 	def train(self):
 		g = self.gradient()
 		# print(g)
-		for i in range(6000):
-			if i % 200 == 0:
+		for i in range(10000):
+			if i % 1000 == 0:
 				print("i =",i)
 				print(self.loss())
-				# print(g)
+				print(self.acc())
+				print(g[0])
+				print(g[12])
 			self.wRate += g**2
 			self.w -= self.lr / np.sqrt(self.wRate) * g
 			g = self.gradient()
@@ -65,6 +67,16 @@ class LogisticRegression:
 			return 1
 		else:
 			return 0
+
+	def acc(self):
+		count = 0
+		for v in self.vectors[0]:
+			if predict(v) == 0:
+				cout += 1
+		for v in self.vectors[1]:
+			if predict(v) == 1:
+				cout += 1
+		return count/(self.count[0] + self.count[1])
 
 	def test(self):
 		self.train()
