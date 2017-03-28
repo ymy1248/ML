@@ -2,13 +2,15 @@ import numpy as np
 # TODO bias
 
 class LogisticRegression:
-	def __init__ (self, vectors, labels):
+	def __init__ (self, vectors, labels, valiVec, valiLabel):
 		self.vectors = [[],[]]
 		self.count = [0,0]
 		self.dim = len(vectors[0])
 		self.w = np.array([2.0]*self.dim)
-		self.lr = 50.0
+		self.lr = 1.0
 		self.wRate = np.array([0.0]*self.dim)
+		self.valiVec = valiVec
+		self.valiLabel = valiLabel
 
 		i = 0
 		while labels[i] != 0:
@@ -45,17 +47,10 @@ class LogisticRegression:
 	def train(self):
 		g = self.gradient()
 		# print(g)
-		for i in range(10000):
-			if i % 1000 == 0:
-				print("i =",i)
-				print(self.loss())
-				print(self.acc())
-				print(g[0])
-				print(g[12])
+		for i in range(1000):
 			self.wRate += g**2
 			self.w -= self.lr / np.sqrt(self.wRate) * g
 			g = self.gradient()
-
 
 	def sigFunc(self, vector):
 		z = np.dot(self.w,vector)
@@ -63,7 +58,7 @@ class LogisticRegression:
 
 	def predict(self, vector):
 		out = self.sigFunc(vector)
-		if out >= 0:
+		if out >= 0.5:
 			return 1
 		else:
 			return 0
@@ -71,13 +66,20 @@ class LogisticRegression:
 	def acc(self):
 		count = 0
 		for v in self.vectors[0]:
-			if predict(v) == 0:
-				cout += 1
+			if self.predict(v) == 0:
+				count += 1
 		for v in self.vectors[1]:
-			if predict(v) == 1:
-				cout += 1
+			if self.predict(v) == 1:
+				count += 1
 		return count/(self.count[0] + self.count[1])
 
+	def validation(self):
+		total = len(self.valiVec)
+		count = 0
+		for i in range(total):
+			if self.predict(self.valiVec[i]) == self.valiLabel[i]:
+				count += 1
+		return count/total
 	def test(self):
 		self.train()
 
