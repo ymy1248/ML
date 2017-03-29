@@ -6,12 +6,11 @@ class LogisticRegression:
 		self.vectors = [[],[]]
 		self.count = [0,0]
 		self.dim = len(vectors[0])
-		self.w = np.array([2.0]*self.dim)
-		self.lr = 1.0
+		self.w = np.random.rand(self.dim)
+		self.lr = 10
 		self.wRate = np.array([0.0]*self.dim)
 		self.valiVec = valiVec
 		self.valiLabel = valiLabel
-
 		i = 0
 		while labels[i] != 0:
 			i += 1
@@ -29,27 +28,30 @@ class LogisticRegression:
 				self.count[1] = self.count[1] + 1
 
 	def loss(self):
-		loss = self.sigFunc(self.vectors[0][0])
-		for v in self.vectors[0][1:]:
-			loss *= self.sigFunc(v)
+		loss = 0.0
+		for v in self.vectors[0]:
+			loss += np.log(self.sigFunc(v))
 		for v in self.vectors[1]:
-			loss *= (1-self.sigFunc(v))
+			loss += np.log((1-self.sigFunc(v)))
 		return loss
 
 	def gradient(self):
 		g = np.array([0.0]*self.dim)
 		for v in self.vectors[0]:
 			g += -(0-self.sigFunc(v))*v
+			# print(self.sigFunc(v))
 		for v in self.vectors[1]:
 			g += -(1-self.sigFunc(v))*v
-		return g
+			# print(self.sigFunc(v))
+
+		return g/(self.count[0] + self.count[1])
 
 	def train(self):
 		g = self.gradient()
 		# print(g)
 		for i in range(1000):
 			self.wRate += g**2
-			self.w -= self.lr / np.sqrt(self.wRate) * g
+			self.w -= self.lr / np.sqrt(self.wRate)*g
 			g = self.gradient()
 
 	def sigFunc(self, vector):
@@ -58,9 +60,12 @@ class LogisticRegression:
 
 	def predict(self, vector):
 		out = self.sigFunc(vector)
-		if out >= 0.5:
+		if out >= 0.5 and out <= 1:
 			return 1
+		elif out >=0 and out < 0.5:
+			return 0
 		else:
+			print("WRONG: sig function: ", out)
 			return 0
 
 	def acc(self):
