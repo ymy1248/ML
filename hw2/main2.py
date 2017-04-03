@@ -37,22 +37,23 @@ for i in range(1, len(xTestStr)):
 		vector.append(float(xTestStr[i][j]))
 	xTest.append(vector)
 
-config = {"order":2,"lr":2, "iter": 100, "vali":30000, "lamda":10}
+config = {"order":4,"lr":1, "iter": 10, "vali":30000, "lamda":20}
 newVector = []
-model = log.LogisticRegression(xTrain, yTrain, xTest, config)
+
 # model = log.LogisticRegression(newVector[1:30000], yTrain[1:30000], newVector[30000:], yTrain[30000:], config)
-lastName = "logi_init"
-pickle.dump(model, open(lastName,"wb"))
-count = 0
-while True:
-	count += config["iter"]
-	model = pickle.load(open(lastName,"rb"))
-	model.train()
-	valiScore = model.validation()
-	lastName = "logi_" + str(config["order"]) + "_" + str(count) + "_" + str(valiScore)
-	pickle.dump(model,open(lastName,"wb"))
-	print(lastName)
-	print(model.loss())
+for order in range(2,6):
+	config["order"] = order
+	for lamda in range(0,50,10):
+		config["lamda"] = lamda
+		count = 0
+		model = log.LogisticRegression(xTrain, yTrain, xTest, config)
+		for i in range(10):
+			count += config["iter"]
+			model.train()
+			valiScore = model.validation()
+			lastName = str(valiScore) + "_" + str(config["order"]) + "_" +  str(config["lamda"]) + "_"+ str(count)
+			pickle.dump(model.w,open(lastName+"_w","wb"))
+			pickle.dump(model.b,open(lastName+"_b","wb"))
 # pickle.dump(model,open("logistic_iter6000.p", "wb"))
 model = pickle.load(open("logi_115000_0.8457633736821554", "rb"))
 # model.train()
