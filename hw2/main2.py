@@ -37,7 +37,7 @@ for i in range(1, len(xTestStr)):
 		vector.append(float(xTestStr[i][j]))
 	xTest.append(vector)
 
-config = {"order":2,"lr":2, "iter": 1000, "vali":30000}
+config = {"order":2,"lr":2, "iter": 100, "vali":30000, "lamda":10}
 newVector = []
 model = log.LogisticRegression(xTrain, yTrain, xTest, config)
 # model = log.LogisticRegression(newVector[1:30000], yTrain[1:30000], newVector[30000:], yTrain[30000:], config)

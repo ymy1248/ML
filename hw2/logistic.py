@@ -19,8 +19,9 @@ class LogisticRegression:
 		self.lr = config["lr"]
 		self.wRate = np.zeros((config["order"],self.dim))
 		self.bRate = 0
-		self.xVal = np.array(x[config["vali"]+1:])
+		self.xVal = np.array(xNorm[config["vali"]+1:])
 		self.yVal = y[config["vali"]+1:]
+		self.lamda = self.c["lamda"]
 
 	def loss(self):
 		loss = 0.0
@@ -28,6 +29,7 @@ class LogisticRegression:
 			Y = self.y[i]
 			y = self.sigTrain(i)
 			loss += -(np.dot(Y, np.log(y)) + np.dot((1-Y), np.log(1-y)))
+		loss += self.lamda*np.sum(self.w**2)
 		return loss
 
 	def gradient(self):
@@ -40,7 +42,7 @@ class LogisticRegression:
 			b += base
 			for j in range(self.c["order"]):
 				g[j] += base*self.x[i][j]
-		return g/num, b/num
+		return g + self.lamda * self.w/num, b/num
 
 	def train(self):
 		gGra, bGra = self.gradient()
@@ -125,12 +127,11 @@ class LogisticRegression:
 
 		return X_train_normed, X_test_normed
 
-	def wirte(self):
+	def write(self):
 		with open("ans.csv", "w") as f:
 			writer = csv.writer(f,lineterminator='\n')
 			writer.writerow(["id","label"])
 			for i in range(len(self.xTest)):
-				v = np.append(v,1.0)
 				# writer.writerow([i+1, model.predict(v)])
 				writer.writerow([i+1, self.predict(self.xTest[i])])
 
