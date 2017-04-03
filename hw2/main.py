@@ -33,8 +33,9 @@ fs = scaling.FeatureScaling(xTrain)
 newVector = []
 for v in xTrain:
 	newVector.append(fs.trans(v))
-model = gen.BinaryGenerativeModel(newVector, yTrain,config)
+model = gen.BinaryGenerativeModel(xTrain[:30000], yTrain[:30000],xTrain[30000:], yTrain[30000:],config)
 pickle.dump(model,open("generativeModel.p", "wb"))
+print("score:",model.validation())
 
 count = 0
 for i in range(len(xTrain)):
@@ -53,5 +54,5 @@ for i in range(1, len(xTestStr)):
 
 with open("ans.csv", "w") as f:
 	writer = csv.writer(f)
-	for i in range(xTest):
-		writer.writerrow([i, model.predict(xTest[i])])
+	for i in range(len(xTest)):
+		writer.writerow([i, model.predict(xTest[i])])

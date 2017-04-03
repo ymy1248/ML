@@ -6,4 +6,8 @@ class FeatureScaling:
 		self.var = np.var(vectors, axis = 0)
 
 	def trans(self, vector):
-		return (vector - self.mean)/ self.var
+		new = (vector - self.mean)/ self.var
+		for j in range(len(new)):
+			if j == 3 or j == 4 or (j >= 15 and j <= 21):
+				new[j] *= 5
+		return new

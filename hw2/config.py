@@ -1,3 +1,0 @@
-config  = {
-	"func" : 0
-}

@@ -1,8 +1,7 @@
 import numpy as np
-import config
 
 class BinaryGenerativeModel:
-	def __init__(self, vectors, labels, config):
+	def __init__(self, vectors, labels, valiVec, valiLabels, config):
 		self.vectors = [[],[]]
 		i = 0
 		while labels[i] != 0:
@@ -16,6 +15,8 @@ class BinaryGenerativeModel:
 		self.count = [0,0]
 		self.dim = len(vectors[0])
 		self.total = len(labels)
+		self.valiVec = valiVec
+		self.valiLabel = valiLabels
 		for i in range(len(labels)):
 			if labels[i] == 0:
 				self.vectors[0] = np.vstack((self.vectors[0], vectors[i]))
@@ -47,19 +48,32 @@ class BinaryGenerativeModel:
 		pC1 = self.count[1]/self.total
 		pxC0 = self.gaussian(self.mean[0], vector)
 		pxC1 = self.gaussian(self.mean[1], vector)
-		# print("pC0:", pC0, ", pC1", pC1, ", pxC0:", pxC0, ", pxC1:", pxC0)
+		# print("pC0:", pC0, ", pC1", pC1, ", pxC0:", pxC0, ", pxC1:", pxC1)
 		# print(pC0*pxC0/(pC1*pxC1 + pC0*pxC0))
+		if pxC1 == float("inf") or pxC0 == float("inf"):
+			return 0.0
+		if pxC1 == 0.0 and pxC0 == 0.0:
+			return 1.0
 		return pC0*pxC0/(pC1*pxC1 + pC0*pxC0)
 
 	def gaussian(self, mean, vector):
 		diff = np.array(vector)-mean
 		# print("diff:",diff)
 		last = np.dot(self.inv, diff)
-		print("dot:", np.dot(diff,last))
+		# print("dot:", np.dot(diff,last))
 		up = np.exp(-0.5*np.dot(diff,last))
-		print("up:", up)
-		print("down:", self.down)
+		# print("up:", up)
+		# print("down:", self.down)
 		return up/self.down
+
+	def validation(self):
+		total = len(self.valiVec)
+		count = 0
+		for i in range(total):
+			if self.predict(self.valiVec[i]) == self.valiLabel[i]:
+				count += 1
+		return count/total
+
 
 	def predict(self, vector):
 		predict = self.prob(vector)
@@ -68,7 +82,7 @@ class BinaryGenerativeModel:
 		elif predict >=0 and predict < 0.5:
 			return 0
 		else:
-			print("something wrong")
+			print("something wrong, predict = ", predict)
 			return 1
 
 if __name__ == "__main__":
