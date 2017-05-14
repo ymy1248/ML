@@ -4,13 +4,11 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE, LocallyLinearEmbedding
-from sklearn.preprocessing import MinMaxScaler, scale, normalize, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA, KernelPCA
 from sklearn.svm import SVR, SVC
 from sklearn.neighbors import NearestNeighbors
 from sklearn.tree import DecisionTreeRegressor
-
-TRAIN_DIR_PATH = '/home/ymy1248/Code/ML2017_data/hw4/self_data/'
 
 DATA_PATH = sys.argv[1]
 ANS_PATH = sys.argv[2]
@@ -37,23 +35,22 @@ ans = []
 data_npz = np.load(DATA_PATH)
 
 for file_index in range(200):
-   print(file_index)
-   data = data_npz[str(file_index)]
-   pca = PCA()
-   pca.fit(data)
-   ratio_dim = 0
-   while pca.explained_variance_ratio_[ratio_dim] > 0.01:
+    data = data_npz[str(file_index)]
+    pca = PCA()
+    pca.fit(data)
+    ratio_dim = 0
+    while pca.explained_variance_ratio_[ratio_dim] > 0.01:
        ratio_dim += 1
-   eig = get_eigenvalues(data)
-   eig_dim = 0
-   for eig_dim in range(len(eig)):
+    eig = get_eigenvalues(data)
+    eig_dim = 0
+    for eig_dim in range(len(eig)):
        if 0.01 * eig_dim > eig[eig_dim]:
            break
-   ans.append([np.std(data), np.std(pca.explained_variance_ratio_), ratio_dim,
+    ans.append([np.std(data), np.std(pca.explained_variance_ratio_), ratio_dim,
        np.mean(eig), np.std(eig), eig_dim])
 ans = np.array(ans)
 ans = ans.reshape(len(ans), 6)
-scaler = StandardScaler()
+scaler = pickle.load(open('scaler', 'rb'))
 ans = scaler.fit_transform(ans)
 ans = svr.predict(ans)
 
