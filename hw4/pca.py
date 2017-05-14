@@ -19,19 +19,19 @@ images_con = images - mean
 images_con = images_con.reshape(100, 4096)
 U, s, V = np.linalg.svd(images_con)
 
-#fig = plt.figure(figsize = (64,64))
-#for i in range(9):
-#    subplot = fig.add_subplot(3,3,i+1)
-#    #subplot.imshow(eigen_face[:,i].reshape(64,64), cmap = 'gray')
-#    subplot.imshow(V[i].reshape(64, 64), cmap = 'gray')
-#fig.suptitle('Top 9 eigenface')
-#fig.savefig('eigen_face_t.png')
-#
-#fig = plt.figure(figsize = (64,64))
-#for i in range(100):
-#   subplot = fig.add_subplot(10,10,i+1)
-#   subplot.imshow(images[i].reshape(64,64), cmap = 'gray')
-#fig.savefig('origional.png')
+fig = plt.figure(figsize = (64,64))
+for i in range(9):
+   subplot = fig.add_subplot(3,3,i+1)
+   #subplot.imshow(eigen_face[:,i].reshape(64,64), cmap = 'gray')
+   subplot.imshow(V[i].reshape(64, 64), cmap = 'gray')
+fig.suptitle('Top 9 eigenface')
+fig.savefig('eigen_face_t.png')
+
+fig = plt.figure(figsize = (64,64))
+for i in range(100):
+  subplot = fig.add_subplot(10,10,i+1)
+  subplot.imshow(images[i].reshape(64,64), cmap = 'gray')
+fig.savefig('origional.png')
 
 def re_func (eig_num):
     image_reduced = []

@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 from sklearn.manifold import TSNE
 
 PLOT_NUM = 1000 
-#word2vec.word2phrase('/home/ymy1248/Code/ML2017_data/hw4/all.txt', '/home/ymy1248/Code/ML2017_data/hw4/all_phrases.txt', verbose = True)
-#word2vec.word2vec('/home/ymy1248/Code/ML2017_data/hw4/all_phrases.txt', '/home/ymy1248/Code/ML2017_data/hw4/hp.bin', size = 100, verbose = True)
+word2vec.word2phrase('/home/ymy1248/Code/ML2017_data/hw4/all.txt', '/home/ymy1248/Code/ML2017_data/hw4/all_phrases.txt', verbose = True)
+word2vec.word2vec('/home/ymy1248/Code/ML2017_data/hw4/all_phrases.txt', '/home/ymy1248/Code/ML2017_data/hw4/hp.bin', size = 100, verbose = True)
 
 word_model = word2vec.load('/home/ymy1248/Code/ML2017_data/hw4/hp.bin')
 words = []

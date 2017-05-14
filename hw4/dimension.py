@@ -52,7 +52,8 @@ for file_index in range(200):
        np.mean(eig), np.std(eig), eig_dim])
 ans = np.array(ans)
 ans = ans.reshape(len(ans), 6)
-ans = scaler.transform(ans)
+scaler = StandardScaler()
+ans = scaler.fit_trainsform(ans)
 ans = svr.predict(ans)
 
 for i in range(len(ans)):

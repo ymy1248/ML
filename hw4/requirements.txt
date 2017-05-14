@@ -1,0 +1,7 @@
+numpy
+scikit-learn
+adjustText
+matplotlib
+word2vec
+nltk
+pillow
