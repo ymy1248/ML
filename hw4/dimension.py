@@ -37,7 +37,7 @@ ans = []
 data_npz = np.load(DATA_PATH)
 
 for file_index in range(200):
-   data = data_npz[str(file_index) + '.npy']
+   data = data_npz[str(file_index)]
    pca = PCA()
    pca.fit(data)
    ratio_dim = 0
