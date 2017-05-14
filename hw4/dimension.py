@@ -37,6 +37,7 @@ ans = []
 data_npz = np.load(DATA_PATH)
 
 for file_index in range(200):
+   print(file_index)
    data = data_npz[str(file_index)]
    pca = PCA()
    pca.fit(data)
@@ -53,7 +54,7 @@ for file_index in range(200):
 ans = np.array(ans)
 ans = ans.reshape(len(ans), 6)
 scaler = StandardScaler()
-ans = scaler.fit_trainsform(ans)
+ans = scaler.fit_transform(ans)
 ans = svr.predict(ans)
 
 for i in range(len(ans)):
