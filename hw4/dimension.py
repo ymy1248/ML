@@ -51,7 +51,7 @@ for file_index in range(200):
 ans = np.array(ans)
 ans = ans.reshape(len(ans), 6)
 scaler = pickle.load(open('scaler', 'rb'))
-ans = scaler.fit_transform(ans)
+ans = scaler.transform(ans)
 ans = svr.predict(ans)
 
 for i in range(len(ans)):
