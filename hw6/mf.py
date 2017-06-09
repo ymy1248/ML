@@ -1,4 +1,5 @@
 import csv
+import MLutil
 import pickle
 import numpy as np
 import keras.backend as K
@@ -12,6 +13,7 @@ from keras.layers import Input, Embedding, Flatten, Dot, Add, Dense, Dropout, Ba
 from keras.layers import Concatenate
 from keras.regularizers import l2
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from collections import OrderedDict
 
 DIM = 250
 USER_NUM = 6041
@@ -36,10 +38,11 @@ if args.test:
     reader = csv.reader(open(args.test))
     test_data = list(reader)
     test_data = np.array(test_data[1:], dtype = np.dtype('float64'))
-    model = load_model('./model/0.7820_016_200.h5', custom_objects = {'rmse':rmse})
+    model = load_model('./model/0.8519_006_250.h5', custom_objects = {'rmse':rmse})
     ans = model.predict(np.hsplit(test_data[:,1:], 2), batch_size = 512)
     print(ans.shape)
-    ans += RATING_MEAN
+    #ans += RATING_MEAN
+    ans = scaler.inverse_transform(ans)
     count = 0
     for i in ans:
         if np.isnan(i):
@@ -163,6 +166,9 @@ if args.pre:
     #print('Movie ID, min:', np.min(train_data[:, 1]), 'max:', np.max(train_data[:, 1]))
 
 if args.train:
+    DIM = 250
+    storer = MLutil.Storer('mf')
+    model_name = 'implicit'
     x = pickle.load(open('x', 'rb'))
     y = pickle.load(open('y', 'rb'))
     user_b = pickle.load(open('user_b', 'rb'))
@@ -176,6 +182,7 @@ if args.train:
     user_occ = user_occ.reshape(user_occ.shape[0], 1)
     user_age = user_age.reshape(user_age.shape[0], 1)
     user_gender = user_gender.reshape(user_gender.shape[0], 1)
+    #y = StandardScaler().fit_transform(y)
 
     randomize = np.arange(len(x))
     np.random.shuffle(randomize)
@@ -219,25 +226,26 @@ if args.train:
             trainable = False)(user_input)
     user_gender_embed = Embedding(input_dim = 2, 
             output_dim = DIM, 
-            embeddings_regularizer = l2(0.008),
+            embeddings_regularizer = l2(0.003),
             input_length = 1)(user_gender_embed)
     user_age_embed = Embedding(input_dim = 7, 
             output_dim = DIM, 
-            embeddings_regularizer = l2(0.008),
+            embeddings_regularizer = l2(0.003),
             input_length = 1)(user_age_embed)
     user_occ_embed = Embedding(input_dim = int(np.max(user_occ))+1,
             output_dim = DIM, 
             embeddings_regularizer = l2(0.008),
             input_length = 1)(user_occ_embed)
-    user_im = Add()([user_v, user_gender_embed, user_age_embed, user_occ_embed])
     user_bias = Flatten()(user_bias)
     movie_bias = Flatten()(movie_bias)
     user_gender_embed = Flatten()(user_gender_embed)
     user_age_embed = Flatten()(user_age_embed)
     user_occ_embed = Flatten()(user_occ_embed)
-    user_v = Flatten()(user_v)
-    movie_v = Flatten()(movie_v)
+    user_im = Add()([user_v, user_gender_embed, user_age_embed, user_occ_embed])
     user_im = Flatten()(user_im)
+    movie_v = Flatten()(movie_v)
+    #user_im = BatchNormalization()(user_im)
+    #movie_v = BatchNormalization()(movie_v)
     dot = Dot(axes = 1)([user_im, movie_v])
     add = Add()([dot, user_bias, movie_bias])
     model = Model([user_input, movie_input], add)
@@ -258,6 +266,12 @@ if args.train:
             epochs = 1000, 
             validation_split = 0.1,
             callbacks = [earylystopping, checkpoint, reduce_lr])
+    model_dict = OrderedDict()
+    model_dict['rmse'] = his.history['rmse']
+    model_dict['val_rmse'] = his.history['val_rmse']
+    storer.store(model_name + str(DIM), model_dict)
+    storer.close()
+    
 
 if args.en:
     x = pickle.load(open('x', 'rb'))
