@@ -34,20 +34,18 @@ def rmse(y_true, y_pred):
     return K.sqrt(K.mean((y_pred-y_true) ** 2))
 
 if args.test:
-    scaler = pickle.load(open('scaler', 'rb'))
+    #scaler = pickle.load(open('scaler', 'rb'))
     reader = csv.reader(open(args.test))
     test_data = list(reader)
     test_data = np.array(test_data[1:], dtype = np.dtype('float64'))
-    model = load_model('./model/0.8519_006_250.h5', custom_objects = {'rmse':rmse})
+    model = load_model('./model/0.8540_006_240.h5', custom_objects = {'rmse':rmse})
     ans = model.predict(np.hsplit(test_data[:,1:], 2), batch_size = 512)
-    print(ans.shape)
-    #ans += RATING_MEAN
-    ans = scaler.inverse_transform(ans)
+    ans += RATING_MEAN
+    #ans = scaler.inverse_transform(ans)
     count = 0
     for i in ans:
         if np.isnan(i):
             count += 1
-    print('nan number:', count)
     ans[np.isnan(ans)] = RATING_MEAN
     with open(args.testout, 'w') as f:
         writer = csv.writer(f, lineterminator = '\n')
@@ -68,14 +66,12 @@ if args.entest:
     for model in model_list:
         ans += model.predict(np.hsplit(test_data[:,1:], 2), batch_size = 512)
     ans /= len(model_list)
-    print(len(model_list))
     ans += RATING_MEAN
     ans += RATING_MEAN
     count = 0
     for i in ans:
         if np.isnan(i):
             count += 1
-    print('nan number:', count)
     ans[np.isnan(ans)] = RATING_MEAN
     with open(args.testout, 'w') as f:
         writer = csv.writer(f, lineterminator = '\n')
@@ -166,7 +162,7 @@ if args.pre:
     #print('Movie ID, min:', np.min(train_data[:, 1]), 'max:', np.max(train_data[:, 1]))
 
 if args.train:
-    DIM = 250
+    DIM = 240
     storer = MLutil.Storer('mf')
     model_name = 'implicit'
     x = pickle.load(open('x', 'rb'))
@@ -244,11 +240,12 @@ if args.train:
     user_im = Add()([user_v, user_gender_embed, user_age_embed, user_occ_embed])
     user_im = Flatten()(user_im)
     movie_v = Flatten()(movie_v)
+    user_v = Flatten()(user_v)
     #user_im = BatchNormalization()(user_im)
     #movie_v = BatchNormalization()(movie_v)
-    dot = Dot(axes = 1)([user_im, movie_v])
+    dot = Dot(axes = 1)([user_v, movie_v])
     add = Add()([dot, user_bias, movie_bias])
-    model = Model([user_input, movie_input], add)
+    model = Model([user_input, movie_input], dot)
     model.summary()
 
     opt = Adam(lr = 0.0005)
