@@ -35,6 +35,7 @@ ans = []
 data_npz = np.load(DATA_PATH)
 
 for file_index in range(200):
+    print(file_index)
     data = data_npz[str(file_index)]
     pca = PCA()
     pca.fit(data)
